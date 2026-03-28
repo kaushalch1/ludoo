@@ -1,0 +1,176 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ludo</title>
+        <style>
+            .ludo-board{
+                display: grid;
+                grid-template-columns:repeat(15,1fr);
+                grid-template-rows:repeat(15,1fr);
+                width:90vmin;
+                height: 90vmin;
+                background-color: #ffffff;
+                border :2.5px solid black;
+                position: relative;
+                border-radius:6.5px;
+            }
+            .cell{
+                border:1px solid #ccc;
+                display: flex;
+                align-items: center;
+                justify-content:center;
+            }
+            .cell.red-path{
+                background-color: #FF4D4D;
+            }
+            .cell.yellow-path{
+                background-color: #F1C40F;
+            }
+            .cell.green-path{
+                background-color: #2ecc71;
+            }
+            .cell.blue-path{
+                background-color: #3498db;
+            }
+            .cell.red-base{
+                background-color: #FF4D4D;
+                border: none;
+            }
+            .cell.yellow-base{
+                background-color: #F1C40F;
+                border: none;
+            }
+            .cell.blue-base{
+                background-color: #3498DB;
+                border: none;
+            }
+            .cell.green-base{
+                background-color: #2ECC71;
+                border: none;
+            }
+            .player-token{
+                width: 50%;
+                height: 50%;
+                border-radius: 50%;
+                background-color: white;
+                /*border: 4.5px solid #FF4D4D;*/
+                box-shadow: 0px 1px 2px rgba(0,0,0,0.1),
+                            0px 4px 8px rgba(0,0,0,0.6),
+                            0px 12px 24px rgba(0,0,0,0.4);
+                /* position: absolute; */
+                /*grid-column: 1;
+                grid-row: 5;*/
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            .red-piece{
+                border: 4.5px solid #FF4D4d;
+                z-index: 1;
+            }
+            .yellow-piece{
+                border: 4.5px solid #F1C40F;
+                z-index: 2;
+            }
+            .blue-piece{
+                border: 4.5px solid #3498db;
+                z-index: 3;
+            }
+            .green-piece{
+                border:   4.5px solid #2ecC71;
+                z-index: 4;
+            }
+
+            /* #r1, #r2, #r3, #r4{
+                width: 4.5vmin;
+                height: 4.5vmin;
+                top: 13vmin;
+                left: 13vmin;
+            }
+            #g1, #g2, #g3, #g4{
+                width: 4.5vmin;
+                height: 4.5vmin;
+                top: 13vmin;
+                right: 13vmin;
+            }
+            #b1, #b2, #b3, #b4{
+                width: 4.5vmin;
+                height: 4.5vmin;
+                bottom: 13vmin;
+                left: 13vmin;
+            }
+            #y1, #y2, #y3, #y4{
+                width: 4.5vmin;
+                height: 4.5vmin;
+                bottom: 13vmin;
+                right: 13vmin;
+            } */
+
+        </style>
+    </head>
+    <body>
+        <h1>Ludo</h1>
+        <div class="ludo-board" id="board">
+            <div class="home-center"></div>
+
+            <div class="player-token red-piece" id="r1" style="grid-column: 2;grid-row: 2;"></div>
+            <div class="player-token red-piece" id="r2" style="grid-column: 5;grid-row: 2;"></div>
+            <div class="player-token red-piece" id="r3" style="grid-column: 2;grid-row: 5"></div>
+            <div class="player-token red-piece" id="r4" style="grid-column: 5;grid-row: 5;"></div>
+            <div class="player-token blue-piece" id="b1" ></div>
+            <div class="player-token blue-piece" id="b2"></div>
+            <div class="player-token blue-piece" id="b3"></div>
+            <div class="player-token blue-piece" id="b4"></div>
+            <div class="player-token green-piece" id="g1"></div>
+            <div class="player-token green-piece" id="g2"></div>
+            <div class="player-token green-piece" id="g3"></div>
+            <div class="player-token green-piece" id="g4"></div>
+            <div class="player-token yellow-piece" id="y1"></div>
+            <div class="player-token yellow-piece" id="y2"></div>
+            <div class="player-token yellow-piece" id="y3"></div>
+            <div class="player-token yellow-piece" id="y4"></div>
+
+        </div>
+        <script>
+            /*let a1=document.getElementById('a1');*/
+            let board=document.getElementById('board');
+            for(let row=1;row<=15;row++){
+                for(let coli=1;coli<=15;coli++){
+                    if(row>=7 && row<=9 && coli<=9 && coli>=7) continue;
+
+                    let cell=document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.style.gridRow=row; 
+                    cell.style.gridColumn=coli;
+       
+                    if(row<=6 && coli<=6){
+                        cell.classList.add('red-base');
+                    }
+                    if(row<=6 && coli >=10){
+                        cell.classList.add('green-base');
+                    }
+                    if(row>=10 && coli<=6){
+                        cell.classList.add('blue-base');
+                    }
+                    if(row>=10 && coli>=10){
+                        cell.classList.add('yellow-base');
+                    }
+
+                    if(row===8 && coli>1 && coli<=6){
+                        cell.classList.add('red-path');
+                    }
+                    if(coli===8 && row>1 && row<=6){
+                        cell.classList.add('green-path');
+                    }
+                    if(row===8 && coli<15 && coli>=10){
+                        cell.classList.add('yellow-path');
+                    }
+                    if(coli===8 && row<15 && row>=10){
+                        cell.classList.add('blue-path');
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        </script>
+    </body>
+</html>
