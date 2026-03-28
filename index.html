@@ -117,26 +117,34 @@
             <div class="player-token red-piece" id="r2" style="grid-column: 5;grid-row: 2;"></div>
             <div class="player-token red-piece" id="r3" style="grid-column: 2;grid-row: 5"></div>
             <div class="player-token red-piece" id="r4" style="grid-column: 5;grid-row: 5;"></div>
-            <div class="player-token blue-piece" id="b1" ></div>
-            <div class="player-token blue-piece" id="b2"></div>
-            <div class="player-token blue-piece" id="b3"></div>
-            <div class="player-token blue-piece" id="b4"></div>
-            <div class="player-token green-piece" id="g1"></div>
-            <div class="player-token green-piece" id="g2"></div>
-            <div class="player-token green-piece" id="g3"></div>
-            <div class="player-token green-piece" id="g4"></div>
-            <div class="player-token yellow-piece" id="y1"></div>
-            <div class="player-token yellow-piece" id="y2"></div>
-            <div class="player-token yellow-piece" id="y3"></div>
-            <div class="player-token yellow-piece" id="y4"></div>
+            <div class="player-token blue-piece" id="b1" style="grid-column: 2;grid-row: 11;"></div>
+            <div class="player-token blue-piece" id="b2" style="grid-column: 5;grid-row: 11;"></div>
+            <div class="player-token blue-piece" id="b3" style="grid-column: 2;grid-row: 14;"></div>
+            <div class="player-token blue-piece" id="b4" style="grid-column: 5;grid-row: 14"></div>
+            <div class="player-token green-piece" id="g1" style="grid-column: 11;grid-row: 2;"></div>
+            <div class="player-token green-piece" id="g2" style="grid-column: 14;grid-row: 2;"></div>
+            <div class="player-token green-piece" id="g3" style="grid-column: 11;grid-row: 5;"></div>
+            <div class="player-token green-piece" id="g4" style="grid-column: 14; grid-row: 5;"></div>
+            <div class="player-token yellow-piece" id="y1" style="grid-column: 11;grid-row: 11;"></div>
+            <div class="player-token yellow-piece" id="y2" style="grid-column: 14;grid-row: 11;"></div>
+            <div class="player-token yellow-piece" id="y3" style="grid-column: 11;grid-row: 14;"></div>
+            <div class="player-token yellow-piece" id="y4" style="grid-column: 14;grid-row: 14;"></div>
 
         </div>
         <script>
+            let redpath=[
+                [7,2],[7,3],[7,4],[7,5],[7,6],
+                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
+                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
+                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
+                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]
+            ]
+            
             /*let a1=document.getElementById('a1');*/
             let board=document.getElementById('board');
             for(let row=1;row<=15;row++){
                 for(let coli=1;coli<=15;coli++){
-                    if(row>=7 && row<=9 && coli<=9 && coli>=7) continue;
+                    // if(row>=7 && row<=9 && coli<=9 && coli>=7) continue;
 
                     let cell=document.createElement('div');
                     cell.classList.add('cell');
@@ -156,18 +164,33 @@
                         cell.classList.add('yellow-base');
                     }
 
-                    if(row===8 && coli>1 && coli<=6){
+                    if((row===8 && coli>1 && coli<=6)||(row===7&&coli===2)||(row===8&&coli===7)){
                         cell.classList.add('red-path');
                     }
-                    if(coli===8 && row>1 && row<=6){
+                    if((coli===8 && row>1 && row<=6)||(row===2&&coli==9)||(row===7&&coli===8)){
                         cell.classList.add('green-path');
                     }
-                    if(row===8 && coli<15 && coli>=10){
+                    if((row===8 && coli<15 && coli>=10)||(row===9&&coli===14)||(row===8&&coli===9)){
                         cell.classList.add('yellow-path');
                     }
-                    if(coli===8 && row<15 && row>=10){
+                    if((coli===8 && row<15 && row>=10)||(coli===7&&row===14)||(row===9&&coli===8)){
                         cell.classList.add('blue-path');
                     }
+
+                    if(row===7 && coli===7){
+                        cell.style.background = 'linear-gradient(45deg, #ff4d4d 50%, #2ECC71 50%)';
+                    }if(row===9 && coli===7){
+                        cell.style.background= 'linear-gradient(135deg, #FF4D4D 50%, #3498Db 50%)';
+                    }if(row===7 &&coli===9){
+                        cell.style.background='linear-gradient(135deg, #2ECC71 50%, #F1c40f 50%)';
+                    }if(row===9&&coli===9){
+                        cell.style.background='linear-gradient(225deg, #f1c40f 50%, #3498db 50%)';
+                    }if(row===8 && coli===8){
+                        cell.style.background='conic-gradient(from 45deg,#F1c40F  90deg,#3498DB 90deg 180deg,#ff4d4d  180deg 270deg,#2ecc71 270deg)';
+                    }if(row>=7 && row<=9 && coli>=7 && coli<=9){
+                        cell.style.border='none';
+                    }
+                    
                     board.appendChild(cell);
                 }
             }
