@@ -102,7 +102,30 @@
                 width:50px;
                 cursor:pointer;
             }
-
+            .overlay{
+                display:none;
+                position:fixed;
+                top: 0;left: 0;
+                width: 100%;height: 100%;
+                background:rgba(0,0,0,0.5);
+                z-index:10;
+            }
+            .popcontent{
+                background:white;
+                padding: 20px;
+                width: 300px;
+                margin: 15% auto;
+                border-radius: 8px;
+                background-color: #26C6Da;
+            }
+            #popbutton{
+                background-color: yellowgreen;
+                height: 30px;
+                width:50px;
+                color:white;
+                border: 1px solid white;
+                border-radius:1.5px;
+            }
         </style>
     </head>
     <body>
@@ -127,12 +150,34 @@
             <div class="player-token yellow-piece" id="y3" style="grid-column: 11;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
             <div class="player-token yellow-piece" id="y4" style="grid-column: 14;grid-row: 14;"  onclick="turns(this.classList[1],this.id)"></div>
             </div>
-            <button id="rolldice" onclick="roll()"></button>
+            <button id="rolldice" onclick="roll()" title="Roll dice">Roll</button>
             <h4 id="turnsss" style="margin-top:66px;margin-left:-63px;">Red's turn</h4>
+        </div>
+        <div class="overlay" id="popup">
+            <div class="popcontent">
+                <h2>Congratulations!</h2>
+                <p id="winner"></p>
+                <button onclick="window.location.reload()" id="popbutton">Retry</button>
+            </div>
         </div>
         <script>
             var turn=0,num=0,colors=["red-piece","green-piece","yellow-piece","blue-piece"],temp=0;
             var r1=0,r2=0,r3=0,r4=0,b1=0,b2=0,b3=0,b4=0,y1=0,y2=0,y3=0,y4=0,g1=0,g2=0,g3=0,g4=0;
+            var red=0,green=0,yellow=0,blue=0;
+            var activepiece={
+                r1:false,r2:false,r3:false,r4:false,
+                b1:false,b2:false,b3:false,b4:false,
+                g1:false,g2:false,g3:false,g4:false,
+                y1:false,y2:false,y3:false,y4:false
+            };
+            var homepos={
+                r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
+                b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
+                g1:[2,11],g2:[2,14],g3:[5,11],g4:[5,14],
+                y1:[11,11],y2:[11,14],y3:[14,11],y4:[14,14]
+            };
+            var allpiece=["r1","r2","r3","r4","b1","b2","b3","b4","g1","g2","g3","g4","y1","y2","y3","y4"];
+            let winner=document.getElementById("winner");
             //var cellocation={
             //    r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
             //    b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
@@ -168,7 +213,26 @@
                 [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8]
             ];
             function textcolor(){
-
+                let turnsss=document.getElementById("turnsss");
+                let color=colors[turn%4].replace("-piece","");
+                turnsss.innerText=color+"'s turn";
+                turnsss.style.color=color;
+            }
+            textcolor();
+            function getCurrentPieces(){
+                let prefix=colors[turn%4][0];
+                return [prefix+"1",prefix+"2",prefix+"3",prefix+"4"];
+            }
+            function hasAnyLegalMove(){
+                let pathName=colors[turn%4].replace("-piece","")+"path";
+                let len=window[pathName].length;
+                let pieces=getCurrentPieces();
+                for(let i=0;i<pieces.length;i++){
+                    if(window[pieces[i]]+num<len){
+                        return true;
+                    }
+                }
+                return false;
             }
             function turns(class1,id1){
                 let curr=colors[turn%4];
@@ -181,34 +245,92 @@
                 console.log(id1);
                 const moved=movement(id1);
                 if(moved){
-                    if(num!=6){
+                    if(num!==6){
                         turn++;
                     }
                     temp=0;
                     num=0;
+                    textcolor();
                 }
                 //console.log(curr);
             }
             function roll(){
+                if(temp===1){
+                    return;
+                }
                 num=Math.floor(Math.random()*6)+1;
                 let rolldice=document.getElementById("rolldice");
                 let url=num+".png";
                 rolldice.style.backgroundImage="url('" + url + "')";
-                textcolor();
                 rolldice.style.backgroundSize="cover";
                 rolldice.style.backgroundPosition="center";
                 rolldice.style.borderRadius="5px";
                 temp=1;
+                if(!hasAnyLegalMove()){
+                    temp=0;
+                    num=0;
+                    turn++;
+                    textcolor();
+                }
                 //console.log(random);
+            }
+            function popup(){
+                if(Math.max(red,green,blue,yellow)>=4){
+                    if(red>=4){
+                        winner.innerText='Red team has won';
+                    }else if(green>=4){
+                        winner.innerText='Green team has won';
+                    }else if(blue>=4){
+                        winner.innerText='Blue team has won';
+                    }else{
+                        winner.innerText='Yellow team has won';
+                    }
+                    document.getElementById('popup').style.display='block';
+                }
+            }
+            function getpath(piece){
+                if(piece[0]==="r") return "redpath";
+                if(piece[0]==="g") return "greenpath";
+                if(piece[0]==="y") return "yellowpath";
+                return "bluepath";
+            }
+            function gobase(piece){
+                activepiece[piece]=false;
+                window[piece]=0;
+                let token=document.getElementById(piece);
+                token.style.gridRow=homepos[piece][0];
+                token.style.gridColumn=homepos[piece][1];
+            }
+            function killplayer(mover){
+                let moverpath=getpath(mover);
+                let moverpos=window[moverpath][window[mover]];
+                for(let i=0;i<allpiece.length;i++){
+                    let other=allpiece[i];
+                    if(other===mover) continue;
+                    if(other[0]===mover[0]) continue;
+                    if(!activepiece[other]) continue;
+
+                    let otherpath=getpath(other);
+                    let otherpos=window[otherpath][window[other]];
+                    if(otherpos[0]===moverpos[0] && otherpos[1]===moverpos[1]){
+                        gobase(other);
+                    }
+                }
             }
             function movement(piece){
                 console.log(window[piece]);
                 let path=colors[turn%4].replace("-piece","")+"path";
                 if(window[piece]+num<window[path].length){
                     window[piece]+=num;
+                    activepiece[piece]=true;
                     console.log(num);
                     if (window[piece] === window[path].length-1) {
-                          alert("Goal reached!");
+                          alert("Player has reached the home!");
+                          window[path.replace("path","")]++;
+                          activepiece[piece]=false;
+                          popup();
+                    }else{
+                        killplayer(piece);
                     }
                     let [row, coli] = window[path][window[piece]];
                     let token=document.getElementById(piece);
@@ -217,9 +339,6 @@
                     return true;
                 }
                 return false;
-            }
-            function looser(){
-                let cons=document.getElementById("looser");
             }
             /*let a1=document.getElementById('a1');*/
             let board=document.getElementById('board');
