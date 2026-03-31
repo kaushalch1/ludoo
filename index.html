@@ -64,6 +64,15 @@
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
+            h6{
+                background-color: greenyellow;
+                background-size: 15px;
+                gap: 10px;
+                top:15px;left:21px;
+                bottom:15px;right:5px;
+                border: 1.5px solid blue;
+                border-radius:5px;
+            }
             .red-piece{
                 border: 4.5px solid #D32F2F;
                 z-index: 1;
@@ -95,6 +104,8 @@
             body{
                 background-color: #FFFACD;
                 color:#2c2c2c;
+                padding-left: 15px;
+                padding-top: 10px;
                 
             }
             #rolldice{
@@ -150,7 +161,7 @@
             <div class="player-token yellow-piece" id="y3" style="grid-column: 11;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
             <div class="player-token yellow-piece" id="y4" style="grid-column: 14;grid-row: 14;"  onclick="turns(this.classList[1],this.id)"></div>
             </div>
-            <button id="rolldice" onclick="roll()" title="Roll dice">Roll</button>
+            <button id="rolldice" onclick="roll()" title="Roll dice"></button>
             <h4 id="turnsss" style="margin-top:66px;margin-left:-63px;">Red's turn</h4>
         </div>
         <div class="overlay" id="popup">
