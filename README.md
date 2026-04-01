@@ -1,7 +1,7 @@
 Ludo Master: Digital Edition
 A fully interactive, web-based version of the classic board game. This project brings the strategy and thrill of Ludo to your browser, featuring smooth animations and logic-driven gameplay for up to 4 players.
 
-🕹️ How to Play
+🕹️ How to Play:https://kaushalch1.github.io/ludoo/
 Ludo is a strategy board game for two to four players, in which the players race their four tokens from start to finish according to the rolls of a single die.
 
 Game Modes
@@ -30,3 +30,5 @@ Logic: Managed the state of 16 individual pieces.
 Randomization: Used Math.random() to simulate fair die rolls.
 
 Event Listeners: Handled user clicks to select which piece to move after a roll.
+<img width="1888" height="897" alt="image" src="https://github.com/user-attachments/assets/02b58f78-0609-4655-a2f6-5d257266547a" />
+
