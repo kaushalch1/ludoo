@@ -2,409 +2,898 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ludo</title>
-        <style>
-            .ludo-board{
+        <title>
+            Business board game
+        </title>
+    <style>
+            .game-board{
                 display: grid;
-                grid-template-columns:repeat(15,1fr);
-                grid-template-rows:repeat(15,1fr);
-                width:90vmin;
-                height: 90vmin;
-                background-color: #ffffff;
-                border :2.5px solid black;
+                grid-template-columns: repeat(10,1fr);
+                grid-template-rows: repeat(10,1fr);
+                width: 105vmin;
+                height: 95vmin;
+                background: #ECF0F1;
+                border: 5px solid #333333;
                 position: relative;
-                border-radius:6.5px;
-            }
-            .cell{
-                border:1px solid #ccc;
-                display: flex;
-                align-items: center;
-                justify-content:center;
-            }
-            .cell.red-path{
-                background-color: #FF4D4D;
-            }
-            .cell.yellow-path{
-                background-color: #F1C40F;
-            }
-            .cell.green-path{
-                background-color: #2ecc71;
-            }
-            .cell.blue-path{
-                background-color: #3498db;
-            }
-            .cell.red-base{
-                background-color:  #FF6F61;
-                border: none;
-            }
-            .cell.yellow-base{
-                background-color: #FFD54F;
-                border: none;
-            }
-            .cell.blue-base{
-                background-color: #42A5F5;
-                border: none;
-            }
-            .cell.green-base{
-                background-color: #4CAF50;
-                border: none;
-            }
-            .player-token{
-                width: 50%;
-                height: 50%;
-                border-radius: 50%;
-                background-color: white;
-                /*border: 4.5px solid #FF4D4D;*/
-                box-shadow: 0px 1px 2px rgba(0,0,0,0.1),
-                            0px 4px 8px rgba(0,0,0,0.6),
-                            0px 12px 24px rgba(0,0,0,0.4);
-                /* position: absolute; */
-                /*grid-column: 1;
-                grid-row: 5;*/
-                transition: all 0.3s ease;
-                cursor: pointer;
-            }
-            h6{
-                background-color: greenyellow;
-                background-size: 15px;
-                gap: 10px;
-                top:15px;left:21px;
-                bottom:15px;right:5px;
-                border: 1.5px solid blue;
-                border-radius:5px;
-            }
-            .red-piece{
-                border: 4.5px solid #D32F2F;
-                z-index: 1;
-            }
-            .yellow-piece{
-                border: 4.5px solid #FBC02D;
-                z-index: 2;
-            }
-            .blue-piece{
-                border: 4.5px solid #1976D2;
-                z-index: 3;
-            }
-            .green-piece{
-                border:   4.5px solid #2E7D32;
-                z-index: 4;
-            }
-            .game-layout{
-                display: flex;
-                align-items: flex-start;
-                gap: 16px;
-            }
-
-            @media (max-width: 900px){
-                .game-layout{
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
             }
             body{
-                background-color: #FFFACD;
-                color:#2c2c2c;
-                padding-left: 15px;
-                padding-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                background: #2C3E50;
+                font-family: sans-serif;
+                -webkit-text-stroke: 0.02px black;
+            }
+            .color-bar{
+                height: 20%;
+                width: 100%;
+                position: absolute;
+                border-bottom: 1px solid #333333;
+            }
+            .cell{
+                border: 1px solid gray;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                line-height: 1.15;
+                font-weight: bold;
+                position:relative;
+                text-align: center;
+                overflow-wrap: normal;
+                word-break: normal;
+                hyphens: none;
+                background: white;
+                padding: 2px;
+                box-sizing: border-box;
                 
             }
-            #rolldice{
-                height:50px;
-                width:50px;
-                cursor:pointer;
+            .corner{
+                background: #DCDDE1;
+                justify-content: center;
+                font-size: 0.9rem;
             }
-            .overlay{
-                display:none;
-                position:fixed;
-                top: 0;left: 0;
-                width: 100%;height: 100%;
-                background:rgba(0,0,0,0.5);
-                z-index:10;
+            #title{
+                position: absolute;
+                inset: 0;
+                margin: 0;
+                display: grid;
+                place-items: center;
+                text-align: center;
+                pointer-events: none;
             }
-            .popcontent{
-                background:white;
-                padding: 20px;
-                width: 300px;
-                margin: 15% auto;
+            .c1{
+                background-color: #FBBF24;
+                color: white;
+            }
+            .c2{
+                background-color: #dd4c4c;
+                color: white;
+            }
+            .c3{
+                background-color: rgb(114, 236, 108);
+                color: white;
+            }
+            .c4{
+                background-color: rgb(106, 106, 225);
+                color: white;
+            }
+            .price-card{
+                position: absolute;
+                bottom: calc(100% + 6px);
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                color: #222;
+                border: 1px solid #bfc5cc;
+                border-radius: 6px;
+                padding: 6px 8px;
+                font-size: 0.68rem;
+                line-height: 1.25;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+                z-index: 20;
+            }
+            .cell:hover .price-card{
+                opacity: 1;
+            }
+            .flip-cell{
+                padding: 2px;
+                perspective: 700px;
+            }
+            .flip-inner{
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transform-style: preserve-3d;
+                transition: transform 0.45s ease;
+            }
+            .flip-cell:hover .flip-inner{
+                transform: rotateY(180deg);
+            }
+            .flip-front,.flip-back{
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                overflow-wrap: normal;
+                word-break: normal;
+                hyphens: none;
+                padding: 0;
+                box-sizing: border-box;
+                backface-visibility: hidden;
+            }
+            .flip-front{
+                background: white;
+            }
+            .flip-back{
+                background: white;
+                color: #222;
+                flex-direction: column;
+                font-size: 0.66rem;
+                line-height: 1.25;
+                transform: rotateY(180deg);
+                font-weight: bold;
+            }
+            :root {
+                --wood-main: #8d735b;
+                --wood-dark: #5d4a37;
+                --panel-inset: #6b5540;
+                --slot-deep: #3e3024;
+                --text-gold: #dcbfa6;
+                --screen-green: #00ff41;
+                --p1-title: #e63f58;
+                --p2-title: #20aef3;
+                --p3-title: #68d9a8;
+                --p4-title: #f6c97c;
+            }
+
+            body {
+                background-color: #1a1a1a;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                /* color: var(--text-gold); */
+                align-items: flex-start;
+                min-height: 100vh;
+                margin: 0;
+                padding: 24px;
+                box-sizing: border-box;
+                background-image: radial-gradient(circle, #2c3e50 0%, #000 100%);
+                overflow-x: auto;
+            }
+            .game-table {
+                background: var(--wood-main);
+                background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 10px),
+                                  linear-gradient(to bottom, var(--wood-main), var(--wood-dark));
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 60px rgba(0,0,0,0.5);
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                border: 12px solid #4a3b2c;
+                width: min(100%, 1280px);
+                box-sizing: border-box;
+            }
+
+            .top-section {
+                display: grid;
+                grid-template-columns: minmax(220px, 240px) minmax(0, 1fr);
+                gap: 20px;
+                align-items: start;
+            }
+
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                width: 100%;
+                max-width: 240px;
+            }
+
+            .panel {
+                background: var(--panel-inset);
+                padding: 15px;
+                border-radius: 12px;
+                box-shadow: inset 4px 4px 12px rgba(0,0,0,0.5);
+                text-align: center;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .panel h3 { 
+                margin: 0 0 10px 0; 
+                font-size: 11px; 
+            }
+            .dice-tray {
+                background: var(--slot-deep);
+                height: 100px;
                 border-radius: 8px;
-                background-color: #26C6Da;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                cursor: pointer;
+                box-shadow: inset 0 5px 15px rgba(0,0,0,0.6);
             }
-            #popbutton{
-                background-color: yellowgreen;
-                height: 30px;
-                width:50px;
-                color:white;
+
+            .die {
+                width: 45px;
+                height: 45px;
+                background: #fff;
+                color: #111;
+                border-radius: 8px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 24px;
+                font-weight: bold;
+                box-shadow: 3px 3px 0px #aaa;
+            }
+
+            .board {
+                background: #fff;
+                display: grid;
+                grid-template-columns: repeat(11, 1fr);
+                grid-template-rows: repeat(11, 1fr);
+                width: 620px;
+                height: 620px;
+                color: #222;
+                border: 5px solid #222;
+            }
+
+            .game-board {
+                width: min(100%, 620px);
+                aspect-ratio: 1 / 1;
+                height: auto;
+                justify-self: center;
+            }
+
+            .cell {
+                border: 1px solid #ccc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 9px;
+                font-weight: bold;
+                text-align: center;
+                text-transform: uppercase;
+            }
+
+            .center-logo {
+                grid-column: 2 / 11;
+                grid-row: 2 / 11;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 40px;
+                font-weight: 900;
+                color: rgba(0,0,0,0.06);
+            }            
+            .bottom-player-row {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 12px;
+                width: 100%;
+                grid-column: 1 / -1;
+                justify-self: stretch;
+            }
+
+            .player-card {
+                background: var(--panel-inset);
+                padding: 8px;
+                border: 3px solid #4A3B2C;
+                border-radius: 10px;
+                /* box-shadow: inset 3px 3px 10px rgba(0,0,0,0.5); */
+                text-align: center;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .player-card h3 {
+                margin: 0 0 6px 0;
+                font-size: 13px;
+                font-weight: 800;
+                letter-spacing: 0.3px;
+                line-height: 1.1;
+                white-space: nowrap;
+                text-shadow: 0 1px 0 rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.35);
+            }
+            .bottom-player-row .player-card:nth-child(1) h3 { color: var(--p1-title); }
+            .bottom-player-row .player-card:nth-child(2) h3 { color: var(--p2-title); }
+            .bottom-player-row .player-card:nth-child(3) h3 { color: var(--p3-title); }
+            .bottom-player-row .player-card:nth-child(4) h3 { color: var(--p4-title); }
+            .display-screen {
+                background: #080808;
+                color: var(--screen-green);
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                padding: 6px 4px;
+                text-align: right;
+                border-radius: 4px;
+                border: 1px solid #333;
+                box-shadow: inset 0 0 8px rgba(0,255,65,0.2);
+                white-space: nowrap;
+            }
+            .bank-note {
+                width: 30px;
+                height: 18px;
+                background: #c8e6c9;
+                display: inline-block;
+                margin: 5px 2px 0;
+                border-radius: 2px;
+                opacity: 0.7;
+            }
+            .rent{
+                margin-top: 5%;
+                height: 25px;
+                width: 50px;
+                background-color: #DD4C4C;
+                border: 1px solid #F28C8C;
+                border-radius: 5px;
+                color:  white;
+                cursor: pointer;
+                display: none;
+            }
+            .buy{
+                cursor: pointer;
+                margin-top: 5%;
+                height: 25px;
+                width: 50px;
+                background-color: #72EC6C;
+                border: 1px solid #A8F5A2;
+                border-radius: 5px;
+                margin-right: 10%;
+                display: none;
+            }
+            .rent:hover{
+                background-color: #212830;
+                color: #FA4B3C;
+                border: none;
+            }
+            .buy:hover{
+                border: none;
+                color: #72EC6C;
+                background-color: #212830;
+            }
+            @media (max-width: 1180px) {
+                .game-table {
+                    padding: 20px;
+                }
+
+                .top-section {
+                    grid-template-columns: 1fr;
+                    justify-items: center;
+                }
+
+                .sidebar {
+                    max-width: 620px;
+                }
+
+                .game-board {
+                    width: min(100%, 620px);
+                }
+
+                .bottom-player-row {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+            @media (max-width: 720px) {
+                body {
+                    padding: 6px;
+                }
+
+                .game-table {
+                    padding: 12px;
+                    border-width: 6px;
+                    border-radius: 14px;
+                }
+
+                .top-section {
+                    gap: 12px;
+                }
+
+                .panel {
+                    padding: 10px;
+                }
+
+                .bottom-player-row {
+                    gap: 6px;
+                    padding-top: 8px;
+                    grid-template-columns: 1fr;
+                }
+
+                .player-card {
+                    padding: 6px;
+                    border-radius: 8px;
+                }
+
+                .player-card h3 {
+                    font-size: 11px;
+                    margin-bottom: 4px;
+                }
+
+                .display-screen {
+                    font-size: 12px;
+                    padding: 5px 3px;
+                }
+            }
+            .bank-panel{
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+            }
+            .bank-balance{
+                background: #080808;
+                color: #FFDE59;
+                font-size: 1.2rem;
+                padding: 12px;
+                text-align: center;
+                border-radius: 6px;
+                border: 2px solid #444444;
+                margin-bottom: 5px;
+                box-shadow: inset 0 0 10px rgba(255,222,90,0.15);
+            }
+            .bank-buttons{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .bank-btn{
+                color: var(--text-gold);
+                border: 1px solid #4A3B2C;
+                background-color: rgb(165, 93, 42);
+                padding: 8px;
+                border-radius: 4px;
+                font-size: 11.4px;
+                text-transform: uppercase;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .bank-btn:hover{
                 border: 1px solid white;
-                border-radius:1.5px;
+                color: white;
             }
-        </style>
+            .player-piece-container{
+                position: absolute;
+                bottom: 4px;
+                left: 0;right: 0;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 3px;
+                pointer-events: none;
+                z-index: 10;
+            }
+            .player-piece{
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                border: 1px solid rgba(255,255,255,0.4);
+                box-shadow: 0 2 4px rgba(0,0,0,0.4),
+                inset -2 -2 4px rgba(0,0,0,0.3);
+                position: absolute;
+            }
+            .player-piece::after{
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 3px;
+                width: 5px;
+                height: 3px;
+                background: rgba(255,255,255,0.5);
+                border-radius: 50%;
+            }
+            .p1-piece{
+                background: radial-gradient(circle at 30% 30%,#ff7a89,#e63f58);
+                bottom: 2px;left: 2px;
+            }
+            .loan{
+                margin-bottom: -25px;
+                color: red;
+
+            }
+            .p2-piece{
+                background: radial-gradient(circle at 30% 30%,#5fe3ff,#20aef3);
+                top: 2px;left: 2px;
+            }
+            .p3-piece{
+                background: radial-gradient(circle at 30% 30%,#9cefcf,#68d9a8);
+                top:2px;right:2px;
+            }
+            .p4-piece{
+                background: radial-gradient(circle at 30% 30%,#ffe2b2,#f6c97c);
+                bottom:2px;right:2px;
+            }
+            
+</style>      
     </head>
     <body>
-        <h1>Ludo</h1>
-        <div class="game-layout">
-            <div class="ludo-board" id="board">
-                <div class="home-center"></div>
-            <div class="player-token red-piece" id="r1" style="grid-column: 2;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r2" style="grid-column: 5;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r3" style="grid-column: 2;grid-row: 5" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r4" style="grid-column: 5;grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b1" style="grid-column: 2;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b2" style="grid-column: 5;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b3" style="grid-column: 2;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b4" style="grid-column: 5;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g1" style="grid-column: 11;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g2" style="grid-column: 14;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g3" style="grid-column: 11;grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g4" style="grid-column: 14; grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y1" style="grid-column: 11;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y2" style="grid-column: 14;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y3" style="grid-column: 11;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y4" style="grid-column: 14;grid-row: 14;"  onclick="turns(this.classList[1],this.id)"></div>
+        <div class="game-table">
+        <div class="top-section">
+            <div class="sidebar">
+                <div class="panel bank-panel">
+                    <h3 style="color: var(--text-gold);">Reserve bank</h3>
+                    <div class="bank-balance" id="bank-total">
+                        ₹50000
+                    </div>
+                    <div class="bank-buttons">
+                        <button class="bank-btn" id="loan" onclick="takeloan()">Take loan</button>
+                        <button class="bank-btn" id="loan" onclick="payloan()">Pay loan</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3 style="color: var(--text-gold);">Dice tray</h3>
+                    <div class="dice-tray">
+                        <!-- main  dice-->
+                        <button class="die" id="btn1" onclick="game()" title="Roll dice" aria-label="Roll dice"></button>
+                    </div>
+                    <p style="font-size: 19px;color: var(--text-gold);margin-top: 4px;opacity: 0.6;margin-bottom: -10px;">Click on dice to roll</p>
+                </div>
             </div>
-            <button id="rolldice" onclick="roll()" title="Roll dice"></button>
-            <h4 id="turnsss" style="margin-top:66px;margin-left:-63px;">Red's turn</h4>
+        <div class="game-board">
+
+            <div class="cell corner c1" style="grid-row:1;grid-column: 1;" id="18">Rest House</div>
+            
+            <div class="cell flip-cell" style="grid-row: 2;grid-column: 10;" id="8"><div class="flip-inner"><div class="flip-front">Kolkata</div><div class="flip-back"><div>Buy: ₹4500</div><div>Rent: ₹450</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 3;grid-column: 10;" id="7"><div class="flip-inner"><div class="flip-front">Hyderabad</div><div class="flip-back"><div>Buy: ₹5000</div><div>Rent: ₹550</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 4;grid-column: 10;" id="6"><div class="flip-inner"><div class="flip-front">Bangalore</div><div class="flip-back"><div>Buy: ₹5000</div><div>Rent: ₹500</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 5;grid-column: 10;" id="5"><div class="flip-inner"><div class="flip-front">Cochin</div><div class="flip-back"><div>Buy: ₹3000</div><div>Rent: ₹300</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 6;grid-column: 10" id="4"><div class="flip-inner"><div class="flip-front">Air India</div><div class="flip-back"><div>Buy: ₹10000</div><div>Rent: ₹1000</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 7;grid-column: 10;" id="3"><div class="flip-inner"><div class="flip-front">Ahmedabad</div><div class="flip-back"><div>Buy: ₹4000</div><div>Rent: ₹400</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 8;grid-column: 10;" id="2"><div class="flip-inner"><div class="flip-front">Water works</div><div class="flip-back"><div>Buy: ₹3200</div><div>Rent: ₹300</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 9;grid-column: 10;" id="1"><div class="flip-inner"><div class="flip-front">Mumbai</div><div class="flip-back"><div>Buy: ₹8500</div><div>Rent: ₹800</div></div></div></div>
+            
+            <h2 id="title">Business board <br>game</h2>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 2;" id="17"><div class="flip-inner"><div class="flip-front">Indore</div><div class="flip-back"><div>Buy: ₹3500</div><div>Rent: ₹350</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 3;" id="16"><div class="flip-inner"><div class="flip-front">Gwalior</div><div class="flip-back"><div>Buy: ₹3000</div><div>Rent: ₹300</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 4;" id="15"><div class="flip-inner"><div class="flip-front">Patna</div><div class="flip-back"><div>Buy: ₹2000</div><div>Rent: ₹200</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 5;" id="14"><div class="flip-inner"><div class="flip-front">Goa</div><div class="flip-back"><div>Buy: ₹3500</div><div>Rent: ₹350</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 6;" id="13"><div class="flip-inner"><div class="flip-front">Cuttack</div><div class="flip-back"><div>Buy: ₹3000</div><div>Rent: ₹300</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 7;" id="12"><div class="flip-inner"><div class="flip-front">Western railway</div><div class="flip-back"><div>Buy: ₹9500</div><div>Rent: ₹950</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 8;" id="11"><div class="flip-inner"><div class="flip-front">Assam</div><div class="flip-back"><div>Buy: ₹2700</div><div>Rent: ₹250</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 1;grid-column: 9;" id="10"><div class="flip-inner"><div class="flip-front">Electric Company</div><div class="flip-back"><div>Buy: ₹2500</div><div>Rent: ₹200</div></div></div></div>
+            <div class="cell corner c2" style="grid-row: 1;grid-column: 10" id="9">Jail</div>
+
+            <div class="cell corner c4" style="grid-row: 10;grid-column: 1" id="27">Club</div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 2;" id="28"><div class="flip-inner"><div class="flip-front">Tax</div><div class="flip-back"><div>Rent: ₹600</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 3;" id="29"><div class="flip-inner"><div class="flip-front">Shimla</div><div class="flip-back"><div>Buy: ₹2200</div><div>Rent: ₹220</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 4;" id="30"><div class="flip-inner"><div class="flip-front">Chennai</div><div class="flip-back"><div>Buy: ₹4500</div><div>Rent: ₹450</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 5;" id="31"><div class="flip-inner"><div class="flip-front">Southern Railway</div><div class="flip-back"><div>Buy: 9500</div><div>Rent: 950</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 6;" id="32"><div class="flip-inner"><div class="flip-front">Community Chest</div><div class="flip-back"><div>---</div><div>-- -</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 7;" id="33"><div class="flip-inner"><div class="flip-front">Srinagar</div><div class="flip-back"><div>Buy: 5000</div><div>Rent: 500</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 8;" id="34"><div class="flip-inner"><div class="flip-front">Wealth Tax</div><div class="flip-back"><div>Rent: 700</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 10;grid-column: 9;" id="35"><div class="flip-inner"><div class="flip-front">Vizag</div><div class="flip-back"><div>Buy: 3200</div><div>Rent: 320</div></div></div></div>
+            <div class="cell corner c3" style="grid-row: 10;grid-column: 10;" id="0";>
+            Go</div>
+
+            <div class="cell flip-cell" style="grid-row: 9;grid-column: 1;" id="26"><div class="flip-inner"><div class="flip-front">Delhi</div><div class="flip-back"><div>Buy: 6000</div><div>Rent: 600</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 8;grid-column: 1;" id="25"><div class="flip-inner"><div class="flip-front">Chandigarh</div><div class="flip-back"><div>Buy: 2500</div><div>Rent: 250</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 7;grid-column: 1;" id="24"><div class="flip-inner"><div class="flip-front">Lucknow</div><div class="flip-back"><div>Buy: 3500</div><div>Rent: 350</div></div></div></div>
+            <div class="cell flip-cell" style="grid-column: 1;grid-row: 6;" id="23"><div class="flip-inner"><div class="flip-front">Utility</div><div class="flip-back"><div>Buy: 3200</div><div>Rent: 320</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 5;grid-column: 1;" id="22"><div class="flip-inner"><div class="flip-front">Kanpur</div><div class="flip-back"><div>Buy: 4000</div><div>Rent: 400</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 4;grid-column: 1;" id="21"><div class="flip-inner"><div class="flip-front">Northern Railway</div><div class="flip-back"><div>Buy: 9000</div><div>Rent: 900</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 3;grid-column: 1;" id="20"><div class="flip-inner"><div class="flip-front">Motor Boat</div><div class="flip-back"><div>Buy: 7500</div><div>Rent: 750</div></div></div></div>
+            <div class="cell flip-cell" style="grid-row: 2;grid-column: 1;" id="19"><div class="flip-inner"><div class="flip-front">Jaipur</div><div class="flip-back"><div>Buy: 3000</div><div>rent: 300</div></div></div></div>
         </div>
-        <div class="overlay" id="popup">
-            <div class="popcontent">
-                <h2>Congratulations!</h2>
-                <p id="winner"></p>
-                <button onclick="window.location.reload()" id="popbutton">Retry</button>
+        <div class="bottom-player-row">
+            <div class="player-card p1-box">
+                <h3>Player 1</h3>
+                <div class="loan" id="p1-loan">₹</div>
+                <div class="display-screen" id="p1rate">₹25000</div>
+                <button class="buy p1" onclick="payements('buy p1')">Buy</button>
+                <button class="rent p1" onclick="payements('rent p1')">Rent</button>
+            </div>
+            <div class="player-card p2-box">
+                <h3>Player 2</h3>
+                <div class="loan" id="p2-loan">₹</div>
+                <div class="display-screen" id="p2rate">₹25000</div>
+                <button class="buy p2" onclick="payements('buy p2')">Buy</button>
+                <button class="rent p2" onclick="payements('rent p2')">Rent</button>
+            </div>
+            <div class="player-card p3-box">
+                <h3>Player 3</h3>
+                <div class="loan" id="p3-loan">₹</div>
+                <div class="display-screen" id="p3rate">₹25000</div>
+                <button class="buy p3" onclick="payements('buy p3')">Buy</button>
+                <button class="rent p3" onclick="payements('rent p3')">Rent</button>
+            </div>
+            <div class="player-card p4-box">
+                <h3>Player 4</h3>
+                <div class="loan" id="p4-loan">₹</div>
+                <div class="display-screen" id="p4rate">₹25000</div>
+                <button class="buy p4" onclick="payements('buy p4')">Buy</button>
+                <button class="rent p4" onclick="payements('rent p4')">Rent</button>
             </div>
         </div>
+        </div>        
         <script>
-            var turn=0,num=0,colors=["red-piece","green-piece","yellow-piece","blue-piece"],temp=0;
-            var r1=0,r2=0,r3=0,r4=0,b1=0,b2=0,b3=0,b4=0,y1=0,y2=0,y3=0,y4=0,g1=0,g2=0,g3=0,g4=0;
-            var red=0,green=0,yellow=0,blue=0;
-            var activepiece={
-                r1:false,r2:false,r3:false,r4:false,
-                b1:false,b2:false,b3:false,b4:false,
-                g1:false,g2:false,g3:false,g4:false,
-                y1:false,y2:false,y3:false,y4:false
-            };
-            var homepos={
-                r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
-                b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
-                g1:[2,11],g2:[2,14],g3:[5,11],g4:[5,14],
-                y1:[11,11],y2:[11,14],y3:[14,11],y4:[14,14]
-            };
-            var allpiece=["r1","r2","r3","r4","b1","b2","b3","b4","g1","g2","g3","g4","y1","y2","y3","y4"];
-            let winner=document.getElementById("winner");
-            //var cellocation={
-            //    r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
-            //    b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
-            //    g1:[2,11],g2:[2,14],g3:[5,11],g4:[5,14],
-            //    y1:[11,11],y2:[11,14],y3:[14,11],y4:[14,14]
-            //};
-            var redpath=[
-                [7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]
-            ];
-            var yellowpath=[
-                [9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9]
-            ];
-            var greenpath=[
-                [2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]
-            ];
-            var bluepath=[
-                [14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8]
-            ];
-            function textcolor(){
-                let turnsss=document.getElementById("turnsss");
-                let color=colors[turn%4].replace("-piece","");
-                turnsss.innerText=color+"'s turn";
-                turnsss.style.color=color;
+            var p1=25000,p2=25000,p3=25000,p4=25000,currplayer,currplayerindex;
+            var p1loc=0,p2loc=0,p3loc=0,p4loc=0;
+            var turns=["p1","p2","p3","p4"],turns1=0,x=-1,dice=-1;
+            var assetsp1=[],assetsp2=[],assetsp3=[],assetsp4=[],a1,totalassets=[],totalcards=0;
+            var p1col="#E63F58",p2col="#20AEF3",p3col="#68D9A8",p4col="#F6C97C";
+            var payement="",player="";
+            let resolveChoice;
+            var btn1=document.getElementById("btn1");
+            var jail=[0,0,0,0],homemoney=[0,0,0,0];
+            var bank=50000,loan=[0,0,0,0],loanamount=[0,0,0,0],loandue=[-1,-1,-1,-1];
+            function diceroll(random){
+                let a1 = random + ".png";
+                btn1.style.backgroundImage="url('" + a1 + "')";
+                btn1.style.backgroundSize="cover";
             }
-            textcolor();
-            function getCurrentPieces(){
-                let prefix=colors[turn%4][0];
-                return [prefix+"1",prefix+"2",prefix+"3",prefix+"4"];
+            function start(){
+                let a1=document.getElementById("0");
+                let newele1=document.createElement("div");
+                newele1.className="player-piece p1-piece";
+                a1.append(newele1);
+                let newele2=document.createElement("div");
+                newele2.className="player-piece p2-piece";
+                a1.append(newele2);
+                let newele3=document.createElement("div");
+                newele3.className="player-piece p3-piece";
+                a1.append(newele3);
+                let newele4=document.createElement("div");
+                newele4.className="player-piece p4-piece";
+                a1.append(newele4);
             }
-            function hasAnyLegalMove(){
-                let pathName=colors[turn%4].replace("-piece","")+"path";
-                let len=window[pathName].length;
-                let pieces=getCurrentPieces();
-                for(let i=0;i<pieces.length;i++){
-                    if(window[pieces[i]]+num<len){
-                        return true;
+            start();
+            function piecelocation(player){
+                //if(player==="p1"){
+                    let dele1=document.getElementsByClassName("player-piece "+player+"-piece");
+                    dele1[0].remove();
+                    let a1=document.getElementById(window[player+"loc"]%map.length);
+                    let newele=document.createElement("div");
+                    newele.className="player-piece "+player+"-piece";
+                    a1.append(newele);                   
+                //}
+            }
+            function takeloan(){
+                if(loan[currplayerindex]===0){
+                    loan[currplayerindex]=10000;
+                    window[currplayer]+=10000;
+                }
+            }
+            function payloan(){
+                if(loan[currplayerindex]>0&&loan[currplayerindex]<window[currplayer]){
+                    window[currplayer]-=loan[currplayerindex];
+                    loan[currplayerindex]=-1;
+                }
+            }
+            let
+            function probdie(){
+                //probability-dice
+                let r=Math.random();
+                if(r<0.2) return 1;
+                if(r<0.4) return 2;
+                if(r<0.6) return 3;
+                if(r<0.8) return 4;
+                if(r<0.9) return 5;
+                return 6;
+            }
+            async function game(){
+                if(dice===turns1-1){
+                    dice++;
+                    player=turns[turns1%4];
+                    let border=document.getElementsByClassName(player+"-box")[0];
+                    if(border){
+                        border.style.border="2.5px solid goldenrod";
                     }
-                }
-                return false;
-            }
-            function turns(class1,id1){
-                let curr=colors[turn%4];
-                if(temp!==1){
-                    return;
-                }
-                if(curr!==class1){
-                    return;
-                }
-                console.log(id1);
-                const moved=movement(id1);
-                if(moved){
-                    if(num!==6){
-                        turn++;
+                    const playerIndex=Number(player[1])-1;
+                    if(jail[playerIndex]>0){
+                        jail[playerIndex]--;
+                        turns1++;
+                        if(border){
+                            border.style.border="3px solid #4A3B2C";
+                        }
+                        return;
+                    }currplayer=player;currplayerindex=playerIndex;
+                    if(loan[playerIndex]>0){
+                        loandue[playerIndex]++;
+                        if(loandue[playerIndex]%5===0){
+                            loandue[playerIndex]+=loandue[playerIndex]*0.1;
+                        }
                     }
-                    temp=0;
-                    num=0;
-                    textcolor();
-                }
-                //console.log(curr);
-            }
-            function roll(){
-                if(temp===1){
-                    return;
-                }
-                num=Math.floor(Math.random()*6)+1;
-                let rolldice=document.getElementById("rolldice");
-                let url=num+".png";
-                rolldice.style.backgroundImage="url('" + url + "')";
-                rolldice.style.backgroundSize="cover";
-                rolldice.style.backgroundPosition="center";
-                rolldice.style.borderRadius="5px";
-                temp=1;
-                if(!hasAnyLegalMove()){
-                    temp=0;
-                    num=0;
-                    turn++;
-                    textcolor();
-                }
-                //console.log(random);
-            }
-            function popup(){
-                if(Math.max(red,green,blue,yellow)>=4){
-                    if(red>=4){
-                        winner.innerText='Red team has won';
-                    }else if(green>=4){
-                        winner.innerText='Green team has won';
-                    }else if(blue>=4){
-                        winner.innerText='Blue team has won';
+                    let random=probdie();
+                    let text=player+"rate";
+                    let btns=document.getElementsByClassName(player);
+                    for(let btn of btns){
+                        btn.style.display="inline-block";
+                    }
+                    diceroll(random);
+                    console.log(random);
+                    const previousLoc=window[player+"loc"];
+                    const nextRawLoc=previousLoc+random;
+                    window[player+"loc"]=nextRawLoc%map.length;
+                    if(nextRawLoc>=map.length){
+                        window[player]+=10000;
+                        document.getElementById(text).innerText="₹"+window[player];
+                    }
+                    //jail
+                    if((window[player+"loc"]%map.length)===9){
+                        jail[playerIndex]=2;
+                        piecelocation(player);
+                        turns1++;
+                        for(let btn of btns){
+                            btn.style.display="none";
+                        }
+                        if(border){
+                            border.style.border="3px solid #4A3B2C";
+                        }
+                        return;
+                    }
+                    var currentSquare=map[window[player+"loc"]];
+                    if(totalassets.includes(currentSquare[0])||window[player+"loc"]==28||window[player+"loc"]===34){
+                        btns[0].style.cursor="not-allowed";
+                    }
+                    piecelocation(player);
+                    //corners
+                    if(window[player+"loc"]===0||window[player+"loc"]===9){
+                        btns[0].style.cursor="not-allowed";
+                        btns[1].style.cursor="not-allowed";
+                        turns1++;
+                        for(let btn of btns){
+                            btn.style.display="none";
+                        }
+                        if(border){
+                            border.style.border="3px solid #4A3B2C";
+                        }
+                        return;
+                    }
+                    if(random===6){
+                        turns1--;dice--;
+                    }
+                    if(window[player+"loc"]===18){
+                        let resthousebonus=11000;
+                        window[player]+=resthousebonus;
+                        homemoney[playerIndex]+=resthousebonus;
+                        document.getElementById(text).innerText="₹"+window[player];
+                        alert(player.toUpperCase()+" rested at Rest House and received ₹11000");
+                        turns1++;
+                        for(let btn of btns){
+                            btn.style.display="none";
+                        }
+                        if(border) border.style.border="3px solid #4A3B2C";
+                        return;
+                    }
+                    if(window[player+"loc"]===27){
+                        let clubhousefee=4000;
+                        window[player]-=clubhousefee;
+                        homemoney[playerIndex]-=clubhousefee;
+                        document.getElementById(text).innerText="₹"+window[player];
+                        alert(player.toUpperCase()+" Vistited club house and spent ₹4000");
+                        turns1++;
+                        for(let btn of btns){
+                            btn.style.display="none";
+                        }
+                        if(border) border.style.border="3px solid #4A3B2C";
+                        return;
+                    }
+                    let choice=await new Promise(resolve=>{
+                        resolveChoice=resolve;
+                    })
+                    let choices=payement.split(" ")[0];
+                    let lastpurchase=0;
+                    let abc=document.getElementById("abc");
+                    let abc1=document.getElementById("abc1");
+                    if(currentSquare && currentSquare[2]>0&&choices==="buy"&&!window['assets'+player].includes(currentSquare[0])&&!totalassets.includes(currentSquare[0])&&window[player+"loc"]!=28&&window[player+"loc"]!=34){
+                        window[player]-=currentSquare[1];bank+=currentSquare[1];
+                        document.getElementById(text).innerText="₹"+window[player];
+                        window['assets'+player].push(currentSquare[0]);
+                        totalassets.push(currentSquare[0]);
+                        totalcards++;
+                        if(totalcards===30){
+                            winner();
+                        }
+                        document.getElementById("bank-total").innerText="₹"+bank;
+                        let a1=document.getElementById(window[player+"loc"]%map.length);
+                        a1.style.color=window[player+"col"];
+                        currentSquare[3]=player;
+                    }else if(window["assets"+player].includes(currentSquare[0])){
+                        //no-work
                     }else{
-                        winner.innerText='Yellow team has won';
+                        window[player]-=currentSquare[2];
+                        document.getElementById(text).innerText="₹"+window[player];
+                        if(currentSquare[3]!=="Bank"){
+                            window[currentSquare[3]]+=currentSquare[2];
+                            document.getElementById(currentSquare[3]+"rate").innerText="₹"+window[currentSquare[3]];
+                        }else{
+                            bank+=currentSquare[2];
+                            document.getElementById("bank-total").innerText="₹"+bank;
+                        }
                     }
-                    document.getElementById('popup').style.display='block';
+                    console.log(window[player]);
+                    turns1++;
+                    for(let btn of btns){
+                        btn.style.cursor="pointer";
+                        btn.style.display="none";
+                    }
+                    if(border) border.style.border="3px solid #4A3B2C";
                 }
             }
-            function getpath(piece){
-                if(piece[0]==="r") return "redpath";
-                if(piece[0]==="g") return "greenpath";
-                if(piece[0]==="y") return "yellowpath";
-                return "bluepath";
-            }
-            function gobase(piece){
-                activepiece[piece]=false;
-                window[piece]=0;
-                let token=document.getElementById(piece);
-                token.style.gridRow=homepos[piece][0];
-                token.style.gridColumn=homepos[piece][1];
-            }
-            function killplayer(mover){
-                let moverpath=getpath(mover);
-                let moverpos=window[moverpath][window[mover]];
-                for(let i=0;i<allpiece.length;i++){
-                    let other=allpiece[i];
-                    if(other===mover) continue;
-                    if(other[0]===mover[0]) continue;
-                    if(!activepiece[other]) continue;
-
-                    let otherpath=getpath(other);
-                    let otherpos=window[otherpath][window[other]];
-                    if(otherpos[0]===moverpos[0] && otherpos[1]===moverpos[1]){
-                        gobase(other);
-                    }
+            function payements(x1){
+                if(player===x1.split(" ")[1]){
+                    payement=x1;
+                    resolveChoice();
                 }
+                /*console.log(x1);*/
             }
-            function movement(piece){
-                console.log(window[piece]);
-                let path=colors[turn%4].replace("-piece","")+"path";
-                if(window[piece]+num<window[path].length){
-                    window[piece]+=num;
-                    activepiece[piece]=true;
-                    console.log(num);
-                    if (window[piece] === window[path].length-1) {
-                          alert("Player has reached the home!");
-                          window[path.replace("path","")]++;
-                          activepiece[piece]=false;
-                          popup();
-                    }else{
-                        killplayer(piece);
-                    }
-                    let [row, coli] = window[path][window[piece]];
-                    let token=document.getElementById(piece);
-                    token.style.gridRow = row;
-                    token.style.gridColumn = coli;
-                    return true;
+            function winner(){
+                let p1total=p1,p2total=p2,p3total=p3,p4total=p4;
+                for(let i=0;i<assetsp1.length;i++){
+                    let square=map.find(cell=>cell[0]===assetsp1[i]);
+                    if(square) p1total+=square[2];
                 }
-                return false;
-            }
-            /*let a1=document.getElementById('a1');*/
-            let board=document.getElementById('board');
-            for(let row=1;row<=15;row++){
-                for(let coli=1;coli<=15;coli++){
-                    // if(row>=7 && row<=9 && coli<=9 && coli>=7) continue;
-
-                    let cell=document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.style.gridRow=row; 
-                    cell.style.gridColumn=coli;
-       
-                    if(row<=6 && coli<=6){
-                        cell.classList.add('red-base');
-                    }
-                    if(row<=6 && coli >=10){
-                        cell.classList.add('green-base');
-                    }
-                    if(row>=10 && coli<=6){
-                        cell.classList.add('blue-base');
-                    }
-                    if(row>=10 && coli>=10){
-                        cell.classList.add('yellow-base');
-                    }
-
-                    if((row===8 && coli>1 && coli<=6)||(row===7&&coli===2)||(row===8&&coli===7)){
-                        cell.classList.add('red-path');
-                    }
-                    if((coli===8 && row>1 && row<=6)||(row===2&&coli==9)||(row===7&&coli===8)){
-                        cell.classList.add('green-path');
-                    }
-                    if((row===8 && coli<15 && coli>=10)||(row===9&&coli===14)||(row===8&&coli===9)){
-                        cell.classList.add('yellow-path');
-                    }
-                    if((coli===8 && row<15 && row>=10)||(coli===7&&row===14)||(row===9&&coli===8)){
-                        cell.classList.add('blue-path');
-                    }
-
-                    if(row===7 && coli===7){
-                        cell.style.background = 'linear-gradient(45deg, #ff4d4d 50%, #2ECC71 50%)';
-                    }if(row===9 && coli===7){
-                        cell.style.background= 'linear-gradient(135deg, #FF4D4D 50%, #3498Db 50%)';
-                    }if(row===7 &&coli===9){
-                        cell.style.background='linear-gradient(135deg, #2ECC71 50%, #F1c40f 50%)';
-                    }if(row===9&&coli===9){
-                        cell.style.background='linear-gradient(225deg, #f1c40f 50%, #3498db 50%)';
-                    }if(row===8 && coli===8){
-                        cell.style.background='conic-gradient(from 45deg,#F1c40F  90deg,#3498DB 90deg 180deg,#ff4d4d  180deg 270deg,#2ecc71 270deg)';
-                    }if(row>=7 && row<=9 && coli>=7 && coli<=9){
-                        cell.style.border='none';
-                    }
-                    
-                    board.appendChild(cell);
+                for(let i=0;i<assetsp2.length;i++){
+                    let square=map.find(cell=>cell[0]===assetsp2[i]);
+                    if(square) p2total+=square[2];
                 }
+                for(let i=0;i<assetsp3.length;i++){
+                    let square=map.find(cell=>cell[0]===assetsp3[i]);
+                    if(square) p3total+=square[2];
+                }
+                for(let i=0;i<assetsp4.length;i++){
+                    let square=map.find(cell=>cell[0]===assetsp4[i]);
+                    if(square) p4total+=square[2];
+                }
+                p1total-=loan[0];p2total-=loan[1];
+                p3total-=loan[2];p4total-=loan[3];
+                let sortwinners=[p1total,p2total,p3total,p4total];
+                sortwinners.sort((x,y)=>x-y);
+                let winner=sortwinners[3],winner1=sortwinners[2],winner2=sortwinners[1],winner3=sortwinners[0];
             }
+            let map=[
+                //group 1
+                ["Go",0,0,"Bank"],//0
+                ["Mumbai",8500,800,"Bank"],//1           1
+                ["Water works",3200,300,"Bank"],//2       2
+                ["Ahmedabad",4000,400,"Bank"],//3        3
+                ["Air India",10000,1000,"Bank"],//4      4
+                ["Cochin",3000,300,"Bank"],//5           5
+                ["Bangalore",5000,500,"Bank"],//6        6
+                ["Hyderabad",5500,550,"Bank"],//7        7
+                ["Kolkata",4500,450,"Bank"],//8          8
+                //group 2
+                ["Jail",0,0,"Bank"],//9
+                ["Electric Company",2500,200,"Bank"],//10 9
+                ["Assam",2700,250,"Bank"],//11            10
+                ["Western railway",9500,900,"Bank"],//12  11
+                ["Cuttack",3000,300,"Bank"],//13          12
+                ["Goa",3500,350,"Bank"],//14                    
+                ["Patna",2000,200,"Bank"],//15             13
+                ["Gwalior",3000,300,"Bank"],//16           14
+                ["Indore",3500,350,"Bank"],//17            15
+                //group 3
+                ["Rest",0,0,"Bank"],//18
+                ["Jaipur",3000,300,"Bank"],//19             16
+                ["Motor boat",7500,750,"Bank"],//20         17
+                ["Northern Railway",9000,900,"Bank"],//21   18
+                ["Kanpur",4000,400,"Bank"],//22             19
+                ["Utility",3200,320,"Bank"],//23            20
+                ["Lucknow",3500,350,"Bank"],//24            21
+                ["Chandigarh",2500,250,"Bank"],//25         22
+                ["Delhi",6000,600,"Bank"],//26              23
+                //group 4
+                ["Club",0,0,"Bank"],//27
+                ["Tax",0,600,"Bank"],//28
+                ["Shimla",2200,220,"Bank"],//29            24
+                ["Chennai",4500,450,"Bank"],//30                
+                ["Southern Railway",9500,950,"Bank"],//31  25
+                ["Community chest",0,0,"Bank"],//32        26
+                ["Srinagar",5000,500,"Bank"],//33          27
+                ["Wealth tax",0,700,"Bank"],//34
+                ["Vizag",3200,320,"Bank"]//35              28
+            ];
         </script>
     </body>
 </html>
