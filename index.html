@@ -1,410 +1,540 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ludo</title>
-        <style>
-            .ludo-board{
-                display: grid;
-                grid-template-columns:repeat(15,1fr);
-                grid-template-rows:repeat(15,1fr);
-                width:90vmin;
-                height: 90vmin;
-                background-color: #ffffff;
-                border :2.5px solid black;
-                position: relative;
-                border-radius:6.5px;
-            }
-            .cell{
-                border:1px solid #ccc;
-                display: flex;
-                align-items: center;
-                justify-content:center;
-            }
-            .cell.red-path{
-                background-color: #FF4D4D;
-            }
-            .cell.yellow-path{
-                background-color: #F1C40F;
-            }
-            .cell.green-path{
-                background-color: #2ecc71;
-            }
-            .cell.blue-path{
-                background-color: #3498db;
-            }
-            .cell.red-base{
-                background-color:  #FF6F61;
-                border: none;
-            }
-            .cell.yellow-base{
-                background-color: #FFD54F;
-                border: none;
-            }
-            .cell.blue-base{
-                background-color: #42A5F5;
-                border: none;
-            }
-            .cell.green-base{
-                background-color: #4CAF50;
-                border: none;
-            }
-            .player-token{
-                width: 50%;
-                height: 50%;
-                border-radius: 50%;
-                background-color: white;
-                /*border: 4.5px solid #FF4D4D;*/
-                box-shadow: 0px 1px 2px rgba(0,0,0,0.1),
-                            0px 4px 8px rgba(0,0,0,0.6),
-                            0px 12px 24px rgba(0,0,0,0.4);
-                /* position: absolute; */
-                /*grid-column: 1;
-                grid-row: 5;*/
-                transition: all 0.3s ease;
-                cursor: pointer;
-            }
-            h6{
-                background-color: greenyellow;
-                background-size: 15px;
-                gap: 10px;
-                top:15px;left:21px;
-                bottom:15px;right:5px;
-                border: 1.5px solid blue;
-                border-radius:5px;
-            }
-            .red-piece{
-                border: 4.5px solid #D32F2F;
-                z-index: 1;
-            }
-            .yellow-piece{
-                border: 4.5px solid #FBC02D;
-                z-index: 2;
-            }
-            .blue-piece{
-                border: 4.5px solid #1976D2;
-                z-index: 3;
-            }
-            .green-piece{
-                border:   4.5px solid #2E7D32;
-                z-index: 4;
-            }
-            .game-layout{
-                display: flex;
-                align-items: flex-start;
-                gap: 16px;
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Ludo - A clean, humanized reimagining of the classic board game. Hand-crafted design, simple rules, pure gameplay.">
+    <title>Ludo - The Game You Know, Reimagined</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Humanized Warm Palette */
+            --bg-main: #fcfcf9;
+            /* Warmer paper-like off-white */
+            --bg-secondary: #ffffff;
+            --red: #e11d48;
+            --blue: #2563eb;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --border-subtle: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+        }
+
+        /* Subtle Noise Texture Overlay for a "Humanized" feel */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Interactive Dice Decoration */
+        .dice-container {
+            position: absolute;
+            perspective: 800px;
+            width: 70px;
+            height: 70px;
+            z-index: 1;
+        }
+
+        .dice-1 {
+            top: 15%;
+            left: 8%;
+            opacity: 0.6;
+        }
+
+        .dice-2 {
+            bottom: 15%;
+            right: 8%;
+            opacity: 0.6;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .front {
+            transform: translateZ(35px);
+        }
+
+        .back {
+            transform: rotateY(180deg) translateZ(35px);
+        }
+
+        .right {
+            transform: rotateY(90deg) translateZ(35px);
+        }
+
+        .left {
+            transform: rotateY(-90deg) translateZ(35px);
+        }
+
+        .top {
+            transform: rotateX(90deg) translateZ(35px);
+        }
+
+        .bottom {
+            transform: rotateX(-90deg) translateZ(35px);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #374151;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: rgba(252, 252, 249, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: flex;
+            gap: 2px;
+        }
+
+        .logo span:nth-child(1) {
+            color: var(--red);
+        }
+
+        .logo span:nth-child(2) {
+            color: var(--green);
+        }
+
+        .logo span:nth-child(3) {
+            color: var(--yellow);
+        }
+
+        .logo span:nth-child(4) {
+            color: var(--blue);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: lowercase;
+            /* More casual */
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--blue);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 8vw, 7.5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 2rem;
+            letter-spacing: -3px;
+        }
+
+        .c-red {
+            color: var(--red);
+        }
+
+        .c-blue {
+            color: var(--blue);
+        }
+
+        .c-green {
+            color: var(--green);
+        }
+
+        .c-yellow {
+            color: var(--yellow);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 550px;
+            margin-bottom: 4rem;
+        }
+
+        .play-btn {
+            padding: 1.25rem 3.5rem;
+            font-size: 1rem;
+            font-weight: 800;
+            border: none;
+            /* Organic, non-perfect radii */
+            border-radius: 40px 35px 45px 38px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+        }
+
+        .play-btn:hover {
+            background: #000;
+        }
+
+        /* Sections */
+        section {
+            padding: 10rem 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            opacity: 0.6;
+            text-transform: lowercase;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        /* Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 30px 25px 35px 28px;
+            /* Humanizing the shape */
+            padding: 3.5rem 2.5rem;
+        }
+
+        .card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px 14px 18px 15px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+            opacity: 0.7;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Rules */
+        .rules-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px 38px 45px 42px;
+            padding: 4rem;
+        }
+
+        .step-row {
+            display: flex;
+            gap: 2.5rem;
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        .step-row:hover {
+            background: #fdfdfd;
+        }
+
+        .step-num {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            line-height: 1;
+        }
+
+        .step-content h4 {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .designer-note {
+            max-width: 480px;
+            margin: 2rem auto;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--text-muted);
+            line-height: 1.8;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .rules-container {
+                padding: 2rem;
             }
 
-            @media (max-width: 900px){
-                .game-layout{
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
+            .step-row {
+                flex-direction: column;
+                gap: 1rem;
             }
-            body{
-                background-color: #FFFACD;
-                color:#2c2c2c;
-                padding-left: 15px;
-                padding-top: 10px;
-                
+
+            .dice-container {
+                display: none;
             }
-            #rolldice{
-                height:50px;
-                width:50px;
-                cursor:pointer;
-            }
-            .overlay{
-                display:none;
-                position:fixed;
-                top: 0;left: 0;
-                width: 100%;height: 100%;
-                background:rgba(0,0,0,0.5);
-                z-index:10;
-            }
-            .popcontent{
-                background:white;
-                padding: 20px;
-                width: 300px;
-                margin: 15% auto;
-                border-radius: 8px;
-                background-color: #26C6Da;
-            }
-            #popbutton{
-                background-color: yellowgreen;
-                height: 30px;
-                width:50px;
-                color:white;
-                border: 1px solid white;
-                border-radius:1.5px;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Ludo</h1>
-        <div class="game-layout">
-            <div class="ludo-board" id="board">
-                <div class="home-center"></div>
-            <div class="player-token red-piece" id="r1" style="grid-column: 2;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r2" style="grid-column: 5;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r3" style="grid-column: 2;grid-row: 5" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token red-piece" id="r4" style="grid-column: 5;grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b1" style="grid-column: 2;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b2" style="grid-column: 5;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b3" style="grid-column: 2;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token blue-piece" id="b4" style="grid-column: 5;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g1" style="grid-column: 11;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g2" style="grid-column: 14;grid-row: 2;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g3" style="grid-column: 11;grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token green-piece" id="g4" style="grid-column: 14; grid-row: 5;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y1" style="grid-column: 11;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y2" style="grid-column: 14;grid-row: 11;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y3" style="grid-column: 11;grid-row: 14;" onclick="turns(this.classList[1],this.id)"></div>
-            <div class="player-token yellow-piece" id="y4" style="grid-column: 14;grid-row: 14;"  onclick="turns(this.classList[1],this.id)"></div>
-            </div>
-            <button id="rolldice" onclick="roll()" title="Roll dice"></button>
-            <h4 id="turnsss" style="margin-top:66px;margin-left:-63px;">Red's turn</h4>
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <span>L</span><span>U</span><span>D</span><span>O</span>
         </div>
-        <div class="overlay" id="popup">
-            <div class="popcontent">
-                <h2>Congratulations!</h2>
-                <p id="winner"></p>
-                <button onclick="window.location.reload()" id="popbutton">Retry</button>
+        <div class="nav-links">
+            <a href="#hero">start</a>
+            <a href="#factions">sides</a>
+            <a href="#rules">rules</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="dice-container dice-1" id="d1">
+            <div class="cube">
+                <div class="face front">
+                    <div class="dot"></div>
+                </div>
+                <div class="face back">
+                    <div class="dot"></div>
+                </div>
+                <div class="face right">
+                    <div class="dot"></div>
+                </div>
+                <div class="face left">
+                    <div class="dot"></div>
+                </div>
+                <div class="face top">
+                    <div class="dot"></div>
+                </div>
+                <div class="face bottom">
+                    <div class="dot"></div>
+                </div>
             </div>
         </div>
-        <script>
-            var turn=0,num=0,colors=["red-piece","green-piece","yellow-piece","blue-piece"],temp=0;
-            var r1=0,r2=0,r3=0,r4=0,b1=0,b2=0,b3=0,b4=0,y1=0,y2=0,y3=0,y4=0,g1=0,g2=0,g3=0,g4=0;
-            var red=0,green=0,yellow=0,blue=0;
-            var activepiece={
-                r1:false,r2:false,r3:false,r4:false,
-                b1:false,b2:false,b3:false,b4:false,
-                g1:false,g2:false,g3:false,g4:false,
-                y1:false,y2:false,y3:false,y4:false
-            };
-            var homepos={
-                r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
-                b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
-                g1:[2,11],g2:[2,14],g3:[5,11],g4:[5,14],
-                y1:[11,11],y2:[11,14],y3:[14,11],y4:[14,14]
-            };
-            var allpiece=["r1","r2","r3","r4","b1","b2","b3","b4","g1","g2","g3","g4","y1","y2","y3","y4"];
-            let winner=document.getElementById("winner");
-            //var cellocation={
-            //    r1:[2,2],r2:[2,5],r3:[5,2],r4:[5,5],
-            //    b1:[11,2],b2:[11,5],b3:[14,2],b4:[14,5],
-            //    g1:[2,11],g2:[2,14],g3:[5,11],g4:[5,14],
-            //    y1:[11,11],y2:[11,14],y3:[14,11],y4:[14,14]
-            //};
-            var redpath=[
-                [7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]
-            ];
-            var yellowpath=[
-                [9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[8,14],[8,13],[8,12],[8,11],[8,10],[8,9]
-            ];
-            var greenpath=[
-                [2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[15,7],[14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]
-            ];
-            var bluepath=[
-                [14,7],[13,7],[12,7],[11,7],[10,7],
-                [9,6],[9,5],[9,4],[9,3],[9,2],[9,1],[8,1],[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],
-                [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,8],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],
-                [7,10],[7,11],[7,12],[7,13],[7,14],[7,15],[8,15],[9,15],[9,14],[9,13],[9,12],[9,11],[9,10],
-                [10,9],[11,9],[12,9],[13,9],[14,9],[15,9],[15,8],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8]
-            ];
-            function textcolor(){
-                let turnsss=document.getElementById("turnsss");
-                let color=colors[turn%4].replace("-piece","");
-                turnsss.innerText=color+"'s turn";
-                turnsss.style.color=color;
-            }
-            textcolor();
-            function getCurrentPieces(){
-                let prefix=colors[turn%4][0];
-                return [prefix+"1",prefix+"2",prefix+"3",prefix+"4"];
-            }
-            function hasAnyLegalMove(){
-                let pathName=colors[turn%4].replace("-piece","")+"path";
-                let len=window[pathName].length;
-                let pieces=getCurrentPieces();
-                for(let i=0;i<pieces.length;i++){
-                    if(window[pieces[i]]+num<len){
-                        return true;
-                    }
-                }
-                return false;
-            }
-            function turns(class1,id1){
-                let curr=colors[turn%4];
-                if(temp!==1){
-                    return;
-                }
-                if(curr!==class1){
-                    return;
-                }
-                console.log(id1);
-                const moved=movement(id1);
-                if(moved){
-                    if(num!==6){
-                        turn++;
-                    }
-                    temp=0;
-                    num=0;
-                    textcolor();
-                }
-                //console.log(curr);
-            }
-            function roll(){
-                if(temp===1){
-                    return;
-                }
-                num=Math.floor(Math.random()*6)+1;
-                let rolldice=document.getElementById("rolldice");
-                let url=num+".png";
-                rolldice.style.backgroundImage="url('" + url + "')";
-                rolldice.style.backgroundSize="cover";
-                rolldice.style.backgroundPosition="center";
-                rolldice.style.borderRadius="5px";
-                temp=1;
-                if(!hasAnyLegalMove()){
-                    temp=0;
-                    num=0;
-                    turn++;
-                    textcolor();
-                }
-                //console.log(random);
-            }
-            function popup(){
-                if(Math.max(red,green,blue,yellow)>=4){
-                    if(red>=4){
-                        winner.innerText='Red team has won';
-                    }else if(green>=4){
-                        winner.innerText='Green team has won';
-                    }else if(blue>=4){
-                        winner.innerText='Blue team has won';
-                    }else{
-                        winner.innerText='Yellow team has won';
-                    }
-                    document.getElementById('popup').style.display='block';
-                }
-            }
-            function getpath(piece){
-                if(piece[0]==="r") return "redpath";
-                if(piece[0]==="g") return "greenpath";
-                if(piece[0]==="y") return "yellowpath";
-                return "bluepath";
-            }
-            function gobase(piece){
-                activepiece[piece]=false;
-                window[piece]=0;
-                let token=document.getElementById(piece);
-                token.style.gridRow=homepos[piece][0];
-                token.style.gridColumn=homepos[piece][1];
-            }
-            function killplayer(mover){
-                let moverpath=getpath(mover);
-                let moverpos=window[moverpath][window[mover]];
-                for(let i=0;i<allpiece.length;i++){
-                    let other=allpiece[i];
-                    if(other===mover) continue;
-                    if(other[0]===mover[0]) continue;
-                    if(!activepiece[other]) continue;
+        <div class="dice-container dice-2" id="d2" style="bottom: 10%; right: 10%;">
+            <div class="cube">
+                <div class="face front">
+                    <div class="dot"></div>
+                </div>
+                <div class="face back">
+                    <div class="dot"></div>
+                </div>
+                <div class="face right">
+                    <div class="dot"></div>
+                </div>
+                <div class="face left">
+                    <div class="dot"></div>
+                </div>
+                <div class="face top">
+                    <div class="dot"></div>
+                </div>
+                <div class="face bottom">
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
 
-                    let otherpath=getpath(other);
-                    let otherpos=window[otherpath][window[other]];
-                    if(otherpos[0]===moverpos[0] && otherpos[1]===moverpos[1]){
-                        gobase(other);
-                    }
-                }
-            }
-            function movement(piece){
-                console.log(window[piece]);
-                let path=colors[turn%4].replace("-piece","")+"path";
-                if(window[piece]+num<window[path].length){
-                    window[piece]+=num;
-                    activepiece[piece]=true;
-                    console.log(num);
-                    if (window[piece] === window[path].length-1) {
-                          alert("Player has reached the home!");
-                          window[path.replace("path","")]++;
-                          activepiece[piece]=false;
-                          popup();
-                    }else{
-                        killplayer(piece);
-                    }
-                    let [row, coli] = window[path][window[piece]];
-                    let token=document.getElementById(piece);
-                    token.style.gridRow = row;
-                    token.style.gridColumn = coli;
-                    return true;
-                }
-                return false;
-            }
-            /*let a1=document.getElementById('a1');*/
-            let board=document.getElementById('board');
-            for(let row=1;row<=15;row++){
-                for(let coli=1;coli<=15;coli++){
-                    // if(row>=7 && row<=9 && coli<=9 && coli>=7) continue;
+        <h1>
+            <span class="c-red">Wait.</span>
+            <span class="c-blue">Roll.</span> <br>
+            <span class="c-green">Move.</span>
+            <span class="c-yellow">Home.</span>
+        </h1>
+        <p>This is the kind of game where one lucky roll changes everything. Grab a color, race your tokens, and try
+            not to yell when someone sends you back to base.</p>
+        <button class="play-btn" onclick="window.location.href='game.html'">Start a new game</button>
+    </section>
 
-                    let cell=document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.style.gridRow=row; 
-                    cell.style.gridColumn=coli;
-       
-                    if(row<=6 && coli<=6){
-                        cell.classList.add('red-base');
-                    }
-                    if(row<=6 && coli >=10){
-                        cell.classList.add('green-base');
-                    }
-                    if(row>=10 && coli<=6){
-                        cell.classList.add('blue-base');
-                    }
-                    if(row>=10 && coli>=10){
-                        cell.classList.add('yellow-base');
-                    }
+    <section id="factions">
+        <div class="section-header">
+            <span class="section-subtitle">the four sides</span>
+            <h2 class="section-title">Pick your corner</h2>
+        </div>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">01</div>
+                <h3>Red</h3>
+                <p>Red players usually play fast and fearless. You are often in the action early, so every move feels
+                    bold.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">02</div>
+                <h3>Green</h3>
+                <p>Green is calm and patient. Let others clash first, then slip through when the board opens up.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">03</div>
+                <h3>Yellow</h3>
+                <p>Yellow loves momentum. One token can sprint across the board and put everyone else under pressure.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">04</div>
+                <h3>Blue</h3>
+                <p>Blue is for careful players. You hold strong positions, wait for mistakes, and punish risky moves.</p>
+            </div>
+        </div>
+    </section>
 
-                    if((row===8 && coli>1 && coli<=6)||(row===7&&coli===2)||(row===8&&coli===7)){
-                        cell.classList.add('red-path');
-                    }
-                    if((coli===8 && row>1 && row<=6)||(row===2&&coli==9)||(row===7&&coli===8)){
-                        cell.classList.add('green-path');
-                    }
-                    if((row===8 && coli<15 && coli>=10)||(row===9&&coli===14)||(row===8&&coli===9)){
-                        cell.classList.add('yellow-path');
-                    }
-                    if((coli===8 && row<15 && row>=10)||(coli===7&&row===14)||(row===9&&coli===8)){
-                        cell.classList.add('blue-path');
-                    }
+    <section id="rules">
+        <div class="section-header">
+            <span class="section-subtitle">the basics</span>
+            <h2 class="section-title">How we play</h2>
+        </div>
+        <div class="rules-container">
+            <div class="step-row">
+                <div class="step-num">01</div>
+                <div class="step-content">
+                    <h4>The Six</h4>
+                    <p>You usually need a 6 to bring a token out of base, and rolling a 6 gives you another chance.
+                        Lucky, but dangerous.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">02</div>
+                <div class="step-content">
+                    <h4>The Track</h4>
+                    <p>Move clockwise and think ahead. Sometimes the safe move is smarter than the flashy one.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">03</div>
+                <div class="step-content">
+                    <h4>The Capture</h4>
+                    <p>Land exactly on an opponent and they go back to base. That one move can flip the whole match.</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <div class="step-num">04</div>
+                <div class="step-content">
+                    <h4>Home</h4>
+                    <p>Get all four tokens home with exact rolls to win. Easy to say, stressful to do.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    if(row===7 && coli===7){
-                        cell.style.background = 'linear-gradient(45deg, #ff4d4d 50%, #2ECC71 50%)';
-                    }if(row===9 && coli===7){
-                        cell.style.background= 'linear-gradient(135deg, #FF4D4D 50%, #3498Db 50%)';
-                    }if(row===7 &&coli===9){
-                        cell.style.background='linear-gradient(135deg, #2ECC71 50%, #F1c40f 50%)';
-                    }if(row===9&&coli===9){
-                        cell.style.background='linear-gradient(225deg, #f1c40f 50%, #3498db 50%)';
-                    }if(row===8 && coli===8){
-                        cell.style.background='conic-gradient(from 45deg,#F1c40F  90deg,#3498DB 90deg 180deg,#ff4d4d  180deg 270deg,#2ecc71 270deg)';
-                    }if(row>=7 && row<=9 && coli>=7 && coli<=9){
-                        cell.style.border='none';
-                    }
-                    
-                    board.appendChild(cell);
-                }
-            }
-        </script>
-    </body>
+    <footer>
+        <div class="footer-logo">LUDO</div>
+        <div class="designer-note">
+            "Built for quick, fun matches with real tension. No clutter, no drama, just the board and your next roll."
+        </div>
+        <p>&copy; 2026 Made by a Ludo fan.</p>
+    </footer>
+
+</body>
+
 </html>
